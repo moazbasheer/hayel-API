@@ -28,7 +28,24 @@ namespace hayelonline.Controllers
             }
             return View(Department);
         }
-
+        [HttpPost]
+        public IActionResult Upsert(Department Department)
+        {
+            if (ModelState.IsValid)
+            {
+                if(Department.Id == 0)
+                {
+                    _db.Departments.Add(Department);
+                    _db.SaveChanges();
+                }
+                else 
+                { 
+                    _db.Departments.Update(Department);
+                    _db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Index");
+        }
         [HttpPost]
         public IActionResult UpdateDepartment(Department Department)
         {
@@ -70,6 +87,43 @@ namespace hayelonline.Controllers
             return Json(new { data = await _db.Departments.ToListAsync() });
         }
 
+        [HttpPost]
+        public IActionResult Insert(Department Department)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Departments.Add(Department);
+                _db.SaveChanges();
+                return Json(new { data = "Department inserted successfully" });
+            }
+            return Json(new { data = "data is not correct!" });
+        }
+        [HttpPost]
+        public IActionResult Update(Department Department)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Departments.Update(Department);
+                _db.SaveChanges();
+                return Json(new { data = "Department updated successfully" });
+            }
+            return Json(new { data = "data is not correct!" });
+        }
+        public IActionResult DeleteDepartment(int? id)
+        {
+            if (id == null)
+            {
+                return Json(new { data = "Input a correct id!" });
+            }
+            var Department = _db.Departments.Find(id);
+            if (Department == null)
+            {
+                return Json(new { data = "Input a correct id!" });
+            }
+            _db.Departments.Remove(Department);
+            _db.SaveChanges();
+            return Json(new { data = "Department is deleted successfully!" });
+        }
     }
     
 }

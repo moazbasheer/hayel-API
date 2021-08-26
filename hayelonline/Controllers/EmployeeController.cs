@@ -19,10 +19,7 @@ namespace hayelonline.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> GetAllEmployees()
-        {
-            return Json(new { data = await _db.Employees.ToListAsync() });
-        }
+        
 
         public IActionResult Delete(int? id)
         {
@@ -75,6 +72,50 @@ namespace hayelonline.Controllers
                 _db.SaveChanges();
             }
             return RedirectToAction("Edit");
+        }
+
+        public async Task<IActionResult> GetAllEmployees()
+        {
+            return Json(new { data = await _db.Employees.ToListAsync() });
+        }
+
+        [HttpPost]
+        public IActionResult Insert(Employee Employee)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Employees.Add(Employee);
+                _db.SaveChanges();
+                return Json(new { data = "Employee inserted successfully" });
+            }
+            return Json(new { data = "data is not correct!" });
+        }
+        [HttpPost]
+        public IActionResult Update(Employee Employee)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Employees.Update(Employee);
+                _db.SaveChanges();
+                return Json(new { data = "Employee updated successfully" });
+            }
+            return Json(new { data = "data is not correct!" });
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            if (id == null)
+            {
+                return Json(new { data = "Input a correct id!" });
+            }
+            var myEmployee = _db.Employees.Find(id);
+            if (myEmployee == null)
+            {
+                return Json(new { data = "Input a correct id!" });
+            }
+            _db.Employees.Remove(myEmployee);
+            _db.SaveChanges();
+            return Json(new { data = "employee is deleted successfully!" });
         }
     }
 }
